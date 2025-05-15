@@ -1,5 +1,6 @@
 import pygetwindow as gw
 import tkinter as tk
+import time
 
 
 def getSize(wind):
@@ -9,10 +10,13 @@ def getSize(wind):
     return wind.size
 
 
-def setSize(wind, w, h):
+def setSize(wind, width_entry, height_entry):
     # wind.moveTo(100, 100)
-
-    wind.resizeTo(w, h)
+    try:
+        wind.resizeTo(int(width_entry.get()), int(height_entry.get()))
+        # setSize(wind, int(width_entry.get()), int(height_entry.get()))
+    except Exception as e:
+        print("Error: ", e)
 
 
 def gui(wind):
@@ -43,18 +47,25 @@ def gui(wind):
                                             ])
     get_button.pack(side="left", padx=5, pady=5)
 
-    set_button = tk.Button(root, text="set size",
-                           command=lambda: setSize(wind, int(width_entry.get()), int(height_entry.get())))
+    set_button = tk.Button(root, text="Set size",
+                           command=lambda:
+                               setSize(wind, width_entry, height_entry)
+                           )
     set_button.pack(side="left", padx=5, pady=5)
+
+    cancel_button = tk.Button(root, text="Cancel",
+                              command=root.destroy)
+    cancel_button.pack(side="bottom", anchor="e", padx=5, pady=5)
 
     root.mainloop()
 
 
 if __name__ == '__main__':
-    window = gw.getWindowsWithTitle('Book1 - Excel')[0]
-    # win = gw.getActiveWindow()
+    # window = gw.getWindowsWithTitle('Book1 - Excel')[0]
     # window.move(0, 0)
-    window.moveTo(0, 0)
+    time.sleep(3)
+    window = gw.getActiveWindow()
+    # window.moveTo(0, 0)
     # print(window.size)
     width, height = getSize(window)
 
