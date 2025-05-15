@@ -1,6 +1,7 @@
 import pygetwindow as gw
 import tkinter as tk
 import time
+import os
 
 
 def getSize(wind):
@@ -28,7 +29,8 @@ def gui(wind):
     root.maxsize(600, 400)
     root.resizable(True, True)
 
-    root.iconbitmap("D:\Coding\Python\windowSize\icon.ico")
+    icon_path = os.path.join(os.path.dirname(__file__), "icon.ico")
+    root.iconbitmap(icon_path)
     root.config(bg="lightblue")
 
     width_entry = tk.Entry(root, width=10)
