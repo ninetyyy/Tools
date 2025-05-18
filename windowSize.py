@@ -9,12 +9,6 @@ SET2WIDTH = -999
 SET2HEIGHT = -999
 
 
-# def getOpenWindow():
-#     windows = gw.getAllWindows()
-#     window_titles = [window.title for window in windows if window.title]
-#     return window_titles
-
-
 def updateWindowList(wind_dropdown):
     windows = gw.getAllWindows()
     window_titles = [window.title for window in windows if window.title]
@@ -24,12 +18,10 @@ def updateWindowList(wind_dropdown):
 
 def getSize(wind_title, width_entry, height_entry):
     wind = gw.getWindowsWithTitle(wind_title)[0]
-
     width_entry.delete(0, tk.END)
     width_entry.insert(0, wind.size[0])
     height_entry.delete(0, tk.END)
     height_entry.insert(0, wind.size[1])
-
     return wind.size
 
 
@@ -87,25 +79,6 @@ def setSize(wind_title, width_entry, height_entry, choice):
         print("Error: ", e)
 
 
-def set1(wind_title, width_entry, height_entry):
-    global SET1WIDTH, SET1HEIGHT
-    if SET1WIDTH == -999 and SET1HEIGHT == -999:
-        if width_entry.get() == "" or height_entry.get() == "":
-            print("Widht or Height is empty -> run getSize()")
-            getSize(wind_title, width_entry, height_entry)
-        else:
-            pass
-        SET1WIDTH = width_entry.get()
-        SET1HEIGHT = height_entry.get()
-        print(f"SET1WIDTH: {SET1WIDTH}, SET1HEIGHT: {SET1HEIGHT}")
-
-    else:
-        print(f"SET1WIDTH: {SET1WIDTH}, SET1HEIGHT: {SET1HEIGHT}")
-        wind = gw.getWindowsWithTitle(wind_title)[0]
-        wind.resizeTo(int(SET1WIDTH), int(SET1HEIGHT))
-        wind.moveTo(0, 0)
-
-
 def clear(choice):
     global SET1WIDTH, SET1HEIGHT, SET2WIDTH, SET2HEIGHT
     try:
@@ -124,17 +97,25 @@ def clear(choice):
 
 
 def print_choice(choice):
-    print(choice.get())
+    try:
+        if choice.get() == "Set1":
+            print(f"mode : {choice.get()}, w = {SET1WIDTH}, h = {SET1HEIGHT}")
+        elif choice.get() == "Set2":
+            print(f"mode : {choice.get()}, w = {SET2WIDTH}, h = {SET2HEIGHT}")
+        elif choice.get() == "manual":
+            print(f"mode : {choice.get()}")
+    except Exception as e:
+        print("Error: ", e)
 
 
 def gui():
-
     root = tk.Tk()
     root.title("window adjustment")
 
     root.minsize(300, 200)
     root.maxsize(800, 400)
     root.resizable(True, True)
+
     # icon
     icon_path = os.path.join(os.path.dirname(__file__), "icon.ico")
     root.iconbitmap(icon_path)
@@ -164,10 +145,6 @@ def gui():
     get_button = tk.Button(root, text="Get Size",
                            command=lambda: [size := getSize(wind_dropdown.get(), width_entry, height_entry),
                                             print(size)
-                                            # width_entry.delete(0, tk.END),
-                                            # width_entry.insert(0, size[0]),
-                                            # height_entry.delete(0, tk.END),
-                                            # height_entry.insert(0, size[1])
                                             ])
     get_button.pack(side="left", padx=5, pady=5)
 
@@ -176,36 +153,28 @@ def gui():
                            command=lambda:
                                setSize(wind_dropdown.get(),
                                        width_entry,
-                                       height_entry, choice)
+                                       height_entry,
+                                       choice)
                            )
     set_button.pack(side="left", padx=5, pady=5)
 
-    # set1_button
-    set1_button = tk.Button(root, text="set1",
-                            command=lambda: set1(wind_dropdown.get(),
-                                                 width_entry, height_entry)
-                            )
-    set1_button.pack(side="left", padx=5, pady=5,
-                     )
     # label_frame
     label_frame = tk.LabelFrame(root, text="Please select mode")
     label_frame.pack(side="left", anchor="w", padx=10,
                      pady=10, fill="both", expand=True)
 
+    # choice for Racio button
     choice = tk.StringVar()
     choice.set("manual")
 
     radio1 = tk.Radiobutton(label_frame, text="Set1",
                             variable=choice, value="Set1", command=lambda: print_choice(choice))
-    # radio1.bind("<Button-1>", lambda event: print_choice(choice))
     radio1.pack(side="left", anchor="w", padx=10, pady=10)
     radio2 = tk.Radiobutton(label_frame, text="Set2",
                             variable=choice, value="Set2", command=lambda: print_choice(choice))
-    # radio2.bind("<Button-1>", lambda event: print_choice(choice))
     radio2.pack(side="left", anchor="w", padx=10, pady=10)
     radio3 = tk.Radiobutton(label_frame, text="manual",
                             variable=choice, value="manual", command=lambda: print_choice(choice))
-    # radio3.bind("<Button-1>", lambda event: print_choice(choice))
     radio3.pack(side="left", anchor="w", padx=10, pady=10)
 
     # cancel_button
@@ -218,6 +187,7 @@ def gui():
                              command=lambda: clear(choice))
     clear_button.pack(side="bottom", anchor="e", padx=5, pady=5)
 
+    # start GUI
     root.mainloop()
 
 
